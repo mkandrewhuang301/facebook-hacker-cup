@@ -1,0 +1,55 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define MAXN 52
+#define s second
+#define f first
+#define lli long long int
+#define pb push_back
+#define lp(i, n)    for(int i = 0; i<n; i++)
+#define loop(i,n) for(int i = 1; i<=n; i++)
+#define INF 2000000000
+#define mod  10000
+#define left 0
+#define right 1
+/*
+   use dp solution. try the dp of landing on left or landing last on right
+   this method is called push dp
+*/
+bool isleft(char c)
+{
+    if(c== 'F' || c == 'X')return true;
+    return false;
+}
+bool isright(char c)
+{
+    if(c == 'F' || c== 'O')return true;
+    return false;
+}
+int main()
+{
+  freopen("inp.txt","r",stdin);
+  freopen("out.txt","w", stdout);
+    int t;
+    cin>>t;
+    loop(_,t){
+        //good
+       cout<<"Case #"<<_<<": ";
+       int n; string s;
+       cin>>n>>s;
+       if(n==0)cout<<0<<endl;
+       vector<vector<int>> dp(n, vector<int> (2, INF));  ///dp will be indexed by zero
+       ///base case
+       if(isleft(s[0]))dp[0][left] = 0;
+       if(isright(s[0]))dp[0][right] = 0;
+
+       for(int i = 0; i<n-1; i++){
+          if(isleft(s[i]) && isleft(s[i+1])) dp[i+1][left] = min(dp[i+1][left],  dp[i][left]);
+          if(isleft(s[i]) && isright(s[i+1])) dp[i+1][right] = min(dp[i+1][right] ,dp[i][left] + 1);
+          if(isright(s[i]) && isright(s[i+1])) dp[i+1][right] = min(dp[i+1][right], dp[i][right]);
+          if(isright(s[i]) && isleft(s[i+1]))  dp[i+1][left] = min(dp[i+1][left], dp[i][right]+1);
+       }
+       cout<<min(dp[n-1][right], dp[n-1][left])<<endl;;
+    }
+
+}
+
