@@ -1,0 +1,82 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define MAXN 52
+#define s second
+#define f first
+#define lli long long int
+#define pb push_back
+#define lp(i, n)    for(int i = 0; i<n; i++)
+#define loop(i,n) for(int i = 1; i<=n; i++)
+#define INF 2000000000
+#define mod  1000000007
+#define left 0
+#define right 1
+/*
+  Task: find sum of  minimum costs for all substrings of s
+  1. create the number of switches before for each point
+  2. create a left, right indexed previous value(we will need this for the f values) . the value should just be the location of the next non, so for each end is +-inf
+  3.then use math to calculaute the number of switches
+    Σmin for each value = Σat each point - Σovercounting at pt
+    Σat each point = (pos)*switches[pos]%mod
+    Σovercounting at pt = (subtract switches until there)
+        a. nonf(X or O)  = (n - pos)*switch(i)
+        b. f = 
+          i.if it is at an end case just get the number of switches there stays the same
+          ii. not last, then until the nextnonf,get the current value. for all other ranges, get the nextnonf (since we can assume f becomes the nextnonfvalue)
+    note pos is indexed at zero
+*/
+
+int main()
+{
+  freopen("inp.txt","r",stdin);
+  freopen("out.txt","w", stdout);
+    int t;
+    cin>>t;
+    loop(_,t){
+        cout<<"Case #"<<_<<": ";
+       int n; string s;
+       cin>>n>>s;
+       char start = 'Z'; 
+       int counter = 0;
+       vector<lli> switches;
+       for(int i = 0 ; i< n; i++){
+        if(s[i] != 'F' && start == 'Z')start = s[i];
+        if(s[i]!=start && s[i] != 'F' && start!= 'Z'){
+            counter++;
+            start = s[i];
+        }
+        switches.pb(counter);
+       }
+       vector<int> nextnonfloc(n);
+       char z = '-';
+       int zloc = 1000000000;
+       for(int i = n-1; i>=0; i--){
+         nextnonfloc[i] = zloc;
+         if(s[i] != 'F'){
+            z = s[i];
+            zloc = i;
+         }
+       }
+       lli sum = 0;
+       lli sub = 0;
+       for(int i = 0 ; i<n; i++){
+        sum= (sum  +(i)*switches[i])%mod;  ///for single values, it is just itself which is zero so ignore them
+       }
+       for(int i =  0; i <n-1; i++){ ///dont consider last element at all because it is zero
+        int pos = i+1;
+        if(s[i] != 'F')sub = (sub  + (n-pos)*switches[i])%mod;
+        else{
+            if(nextnonfloc[i] == 1000000000) sub = (sub  + (n-pos)*switches[i])%mod;
+            else{
+                sub = (sub  + (n-(nextnonfloc[i]))*switches[nextnonfloc[i]])%mod; ////f becomes the switches on the value a bit larger than itself.
+                //If f is the largest, then nextnonf should return ????
+                sub = (sub  + (nextnonfloc[i] - i -1)*switches[i])%mod;
+                ///get nonf index and solve there
+            }
+        }
+       }
+       lli ans = (sum - sub)%mod;
+       while(ans<0)ans+=mod;
+       cout<<ans<<endl;
+    }
+}
