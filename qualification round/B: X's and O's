@@ -1,0 +1,75 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define MAXN 52
+#define s second
+#define f first
+#define lli long long int
+#define pb push_back
+#define lp(i, n)    for(int i = 0; i<n; i++)
+#define loop(i,n) for(int i = 1; i<=n; i++)
+#define INF 100000000
+#define mod  10000
+void horizontal(int i, map<int,int>& works, vector<vector<char>> a, int n)
+{
+    int place = 0;
+    loop(j, n){
+        if(a[i][j] == 'O')return;///does not work
+        if(a[i][j] == 'X')continue;
+        if(a[i][j] == '.')place++;
+    }
+    works[place]++;
+}
+void vertical(int j, map<int,int>& works, vector<vector<char>> a, int n)
+{
+    int place = 0;
+    ///watch out for the ones
+    int pd = 0;
+    loop(i, n){
+        if(a[i][j] == 'O')return;///does not work
+        if(a[i][j] == 'X')continue;
+        if(a[i][j] == '.'){
+            place++;
+            loop(j, n){
+                if(a[i][j] == 'O'){
+                    pd = 0;
+                    break;
+                }
+                else if(a[i][j] == '.')pd++;
+            }
+        }
+
+    }
+    works[place]+=1 - (place == 1 && pd == 1? 1: 0);
+}
+int main()
+{
+  freopen("inp.txt","r",stdin);
+  freopen("out.txt","w", stdout);
+    int t;
+    cin>>t;
+    loop(_,t){
+       cout<<"Case #"<<_<<": ";
+       int n;
+       cin>>n;
+       vector<vector<char>> a(n+1, vector<char> (n+1));
+       loop(i, n){
+        string x;
+        cin>>x;
+        loop(j, n)a[i][j] = x[j-1];
+       }
+       map<int,int> works; //<num moves, num of different sets>
+       loop(i,n){
+         horizontal(i, works, a, n); //if adding just to this column works, then add the amount
+         vertical(i, works, a, n);
+       }
+       int ans = INF;
+       if(works.size() ==0){
+        cout<<"Impossible"<<endl;
+        continue;
+       }
+       cout<<works.begin()->f<< " "<<works.begin()->s<<endl;
+
+    }
+
+}
+
