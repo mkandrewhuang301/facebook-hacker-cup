@@ -1,0 +1,7 @@
+No code: just solution
+get original points and find all new points
+then with new points, solve for total. If total is less than sum of x or over the the sum of x + sum of y, then it is impossible
+
+if it is possible (meaning some order can allow all to be not ower and not upper), find amoutn voer and amount below
+answer is just max(upper,lower)
+as it only takes maximum one move to relocate a person
