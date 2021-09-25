@@ -1,0 +1,95 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define MAXN 52
+#define s second
+#define f first
+#define lli long long int
+#define pb push_back
+#define lp(i, n)    for(int i = 0; i<n; i++)
+#define loop(i,n) for(int i = 1; i<=n; i++)
+#define INF 100000000
+#define mod  10000
+vector<vector<int>> possible(27, vector<int> (27, INF));
+map<char, set<char>> convert; ///<original, s(new)>
+void reset()
+{
+    ///all not possible to transition to except for going to itself
+    possible = vector<vector<int>> (27, vector<int> (27, INF));
+    for(int i  =0; i <26; i++){
+        possible[i][i] = 0;
+    }
+}
+void add(map<char, set<char>>& convert, int n)
+{
+    lp(i,n){
+         string x;
+         cin>>x;
+         convert[x[0]].insert(x[1]);
+       }
+}
+void extended(char prev, char cur)
+{
+    for(auto to: convert[cur]){
+        if( possible[prev - 'A'][cur - 'A'] +1<possible[prev - 'A'][to- 'A']){
+            possible[prev - 'A'][to- 'A'] = possible[prev - 'A'][cur - 'A'] +1;
+            extended(prev, to);
+        }
+    }
+}
+void distancematrix()
+{
+    for(auto from: convert){ ///char
+            for(auto to: from.s){ // char
+                //cout<<from.f<<" "<<to<<endl;
+                possible[from.f - 'A'][to - 'A'] = 1;
+            }
+       }
+       for(auto from: convert){ ///char
+            for(auto to: from.s){ // char
+                //cout<<from.f<<" "<<to<<endl;
+                //possible[from.f - 'A'][to - 'A'] = 1;
+                extended(from.f, to);
+            }
+       }
+}
+int main()
+{
+    ///did you set mod back to big number??
+  freopen("inp.txt","r",stdin);
+  freopen("out.txt","w", stdout);
+    int t;
+    cin>>t;
+    loop(_,t){
+       cout<<"Case #"<<_<<": ";
+       convert.clear();
+       string s;
+       cin>>s;
+       int n;cin>>n;
+       add(convert, n);///add values to convert
+
+       ///base case
+       if(s.length() ==1){
+         cout<<0<<endl;
+         continue;
+       }
+       reset();/// reset distance matrix
+       ///find each distance
+
+       distancematrix();
+
+       int ans = INF;
+       for (char all = 'A';all<='Z';all++){
+          int cur = 0;
+          lp(i,s.length()){
+            char  c = s[i];
+            if(possible[c -'A'][all -'A'] != INF)cur+=possible[c-'A'][all- 'A']; ///if convert not an option
+            else cur = INF;
+          }
+          ans = min(ans, cur);
+       }
+       cout<<(ans ==INF? -1: ans) <<endl;
+
+    }
+
+}
+
