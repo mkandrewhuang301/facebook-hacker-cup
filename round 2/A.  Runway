@@ -1,0 +1,77 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define MAXN 52
+#define s second
+#define f first
+#define lli long long int
+#define pb push_back
+#define lp(i, n)    for(int i = 0; i<n; i++)
+#define loop(i,n) for(int i = 1; i<=n; i++)
+#define INF 2000000000
+#define mod  10000
+/*
+   dp[round][model][has]
+   round = which round it is
+   has = which model is used
+*/
+#define have 1
+#define nothave 0
+int main()
+{
+    freopen("D:/inp.txt", "r", stdin);
+    freopen("D:/out.txt", "w", stdout);
+    int t;
+    cin>>t;
+    loop(_,t){
+       cout<<"Case #"<<_<<": ";
+       int n ,m;
+       cin>>n>>m;
+       multiset<pair<int, int>> orig; /// value , has under or not
+       lp(i, m){
+        int x;
+        cin>>x;
+        orig.insert({x, have});
+       }
+       int ans = 0;
+       lp(i, n){
+          vector<int> cur(m);
+          multiset<pair<int, int>> next;
+          for(auto &it:cur)cin>>it;
+
+          sort(cur.begin(), cur.end());
+          vector<int> remain;
+          for(int j = 0 ; j < m; j++){
+            ///case 1 there is presence of same value no undershirt. Nothing happens and just go again
+            if(orig.find({cur[j],nothave})!= orig.end()){
+                next.insert({cur[j], nothave});
+                auto it = orig.find({cur[j],nothave});
+                orig.erase(it);
+            }
+            ///case 2: there is presence of same value with undershirt. Nothing happens again just update that value
+            else if(orig.find({cur[j],have})!= orig.end()){
+                next.insert({cur[j], have});
+                auto it = orig.find({cur[j],have});
+                orig.erase(it);
+            }
+            ///case 3: if there is no value,then add to a queue. once one pass is done, chuck all remaining values into the new array
+            else{
+                remain.pb(cur[j]);
+            }
+          }
+          sort(remain.begin(), remain.end());
+          //for(auto it: orig) cout<<it.f<< " "<<it.s<<" ";
+          //cout<<endl;
+          for(auto it: remain){
+            next.insert({it, nothave});
+            pair<int,int> temp  = *orig.begin();
+            //cout<<temp.first<< " res"<<temp.second<< "  not"<<nothave<< " ";
+            if(temp.second == nothave)ans++;
+            //ans += (temp.second == have? 0:1);
+            orig.erase(orig.begin());
+          }
+          orig = next;
+       }
+       cout<<ans<<endl;
+    }
+}
+
