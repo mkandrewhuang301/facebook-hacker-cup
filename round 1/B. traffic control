@@ -1,0 +1,46 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define MAXN 52
+#define s second
+#define f first
+#define lli long long int
+#define pb push_back
+#define lp(i, n)    for(int i = 0; i<n; i++)
+#define loop(i,n) for(int i = 1; i<=n; i++)
+#define INF 2000000000
+#define mod  10000
+#define left 0
+#define right 1
+/*
+   minimum number of moves to other side is (n  +m -1), so if each of them were one and larger than a or b, the path is impossible
+
+   for possle values lets just say both paths go directly down and either left or right, with the largest waiting time (that isnt default) on top left or right
+   all other path values will be 1 for simplicity, and all other nonused paths will be 1000 (which is the maximum each value can be)
+   the largest values on the top will be b - (n + m -1)  +1 since n+m-1 is total nodes visited, and  +1 since itself has a intrinsic 1 to it
+   do the same for the other, and print out the path (if either j = leftmost or rightmost and if i is at the end)
+*/
+int main()
+{
+    freopen("D:/inp.txt", "r", stdin);
+    freopen("D:/out.txt", "w", stdout);
+    int t;
+    cin>>t;
+    loop(_,t){
+       cout<<"Case #"<<_<<": ";
+       int n ,m, a,b;
+       cin>>n>>m>>a>>b;
+       if ( n  +m-1 > min(a,b)){
+        cout<<"Impossible"<<endl;
+        continue;
+       }
+       cout<<"Possible"<<endl;
+       cout<<a-n -m+2<< " " ;
+       loop(i, m-2)cout<<1000<<" ";
+       cout<<b - n - m  +2<<endl;
+       loop(i, n-1){
+        lp(j, m) cout<<((j==0 || j== m-1 || i == n-1)? 1 : 1000)<< "  ";
+        cout<<endl;
+       }
+    }
+}
+
