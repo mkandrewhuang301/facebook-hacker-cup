@@ -1,0 +1,81 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define MAXN 52
+#define s second
+#define f first
+#define lli long long int
+#define pb push_back
+#define lp(i, n)    for(int i = 0; i<n; i++)
+#define loop(i,n) for(int i = 1; i<=n; i++)
+#define INF 2000000000
+#define mod  10000
+///
+int dfs(int v, int parent, vector<pair<int,int>>& dp, vector<int> cave, vector<vector<int>> adj)
+{
+    ///base case at leaf, return
+    if(adj[v].size() ==1 && adj[v][0] == parent){
+           dp[v] = {cave[v], 0};
+           return cave[v]; ///should be zero
+    }
+    pair<int, int> temp  = {0,0};
+    //if(dp[v] != temp)return dp[v].f + cave[v];
+    multiset<int> largest;
+    //cout<<v<< "  "<<parent<<endl;
+    largest.insert(0);
+    for(auto child: adj[v]){
+        if(child == parent)continue;
+        largest.insert(-dfs(child, v, dp, cave, adj));
+    }
+    dp[v].f = -*largest.begin();
+    largest.erase(largest.begin());
+    dp[v].s =  -*largest.begin();
+    dp[v].f += cave[v]; dp[v].s += cave[v];
+    //cout<<v<< "  "<<dp[v].f<< "  "<<dp[v].s<<endl;
+    return dp[v].f;// + cave[v];
+
+
+
+}
+void update(int v,int parent, int& slargest,vector<pair<int,int>>& dp, vector<vector<int>> adj,vector<int> cave )
+{
+    slargest = max(slargest, dp[v].s -cave[v]);
+    for(auto child: adj[v]){
+        if(child == parent)continue;
+        if(dp[child].f  +cave[child] == dp[v].f){
+            update(child, v, slargest, dp, adj, cave);
+            break;
+        }
+
+    }
+}
+int main()
+{
+  freopen("inp.txt","r",stdin);
+  freopen("out.txt","w", stdout);
+    int t;
+    cin>>t;
+    loop(_,t){
+       cout<<"Case #"<<_<<": ";
+       int n;
+       cin>>n;
+       vector<int> cave(n+1);
+       loop(i,n)cin>>cave[i];
+       vector<vector<int>> adj(n+1);
+       loop(i,n-1){
+        int a,b;
+        cin>>a>>b;
+        adj[a].pb(b);
+        adj[b].pb(a);
+       }
+       vector<pair<int,int>> dp(n+1, {0,0}); ///get best left or right
+       dfs(1,-1, dp, cave, adj);
+       //loop(i,n)cout<<dp[i].f<< "  "<<dp[i].s<<endl;
+       int largest = dp[1].f;
+       int slargest = dp[1].s -cave[1];
+       update(1,-1, slargest, dp, adj, cave);
+       //cout<<largest<< " " <<slargest<< " "<<cave[1]<<endl;
+       cout<<largest  +slargest <<endl;
+    }
+
+}
+
